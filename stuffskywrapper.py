@@ -54,6 +54,7 @@ def write_stuffconf(dest_file, stuffconf_dict):
 
     with open(dest_file, 'w') as f1:
         f1.write(template.render(stuffconf_dict))
+    return
 
 
 def write_skyconf(dest_file, skyconf_dict):
@@ -71,8 +72,30 @@ def write_skyconf(dest_file, skyconf_dict):
 
     with open(dest_file, 'w') as f1:
         f1.write(template.render(skyconf_dict))
+    return
 
 
+def run_stuff(stuffconf):
+    cmd = "stuff -c {conf} ".format(conf=stuffconf)
+    cmd = shlex.split(cmd)
+
+    subprocess.call(cmd)
+    return
+
+def run_sky(skyconf, img_path=None, t_exp=None):
+    if img_path is None:
+    #    img_path = skyconf['image_name']
+        cmd = "sky -c {conf} ".format(conf=skyconf)
+    else:
+        cmd = "sky -c {conf} -IMAGE_NAME {img_path}".format(conf=skyconf,
+                                                            img_path=img_path)
+    if t_exp is not None:
+        cmd = cmd + "-EXPOSURE_TIME {}".format(t_exp)
+
+    cmd = shlex.split(cmd)
+
+    subprocess.call(cmd)
+    return img_path
 
 
 def main(args):
