@@ -110,13 +110,13 @@ SED_STARS       Vega            # stellar SEDs
 
 #----------------------------- Random Seeds ----------------------------------
 
-SEED_STARS      1               # random seed for the stellar field (0=time)
-SEED_GALAXIES   1               # random seed for the galaxy field (0=time)
+SEED_STARS      15               # random seed for the stellar field (0=time)
+SEED_GALAXIES   15               # random seed for the galaxy field (0=time)
 
 #----------------------------- Miscellaneous ---------------------------------
 
 DATA_DIRECTORY  /home/bruno/packages/stuff-1.26.0/share/stuff/data
                                 # Top of directory tree containing Stuff data
 VERBOSE_TYPE    NORMAL          # QUIET, NORMAL, LOG or FULL
-NTHREADS        0               # Number of simultaneous threads for the SMP
+NTHREADS        4               # Number of simultaneous threads for the SMP
                                 # version of Stuff (0 = automatic)

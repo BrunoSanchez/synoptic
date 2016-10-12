@@ -38,7 +38,7 @@ SEEING_TYPE     LONG_EXPOSURE   # (NONE, LONG_EXPOSURE or SHORT_EXPOSURE)
 SEEING_FWHM   {{ seeing_fwhm }} # FWHM of seeing in arcsec (incl. motion)
 AUREOLE_RADIUS  200             # Range covered by aureole (pix) 0=no aureole
 AUREOLE_SB      16.0            # SB (mag/arcsec2) at 1' from a 0-mag star
-PSF_OVERSAMP    5               # Oversampling factor / final resolution
+PSF_OVERSAMP    10               # Oversampling factor / final resolution
 PSF_MAPSIZE     1024            # PSF mask size (pixels): must be a power of 2
 TRACKERROR_TYPE NONE            # Tracking error model: NONE, DRIFT or JITTER
 TRACKERROR_MAJ  0.0             # Tracking RMS error (major axis) (in arcsec)
@@ -83,7 +83,7 @@ MAG_LIMITS      17.0,26.0       # stellar magnitude range allowed
 #------------------------------ Random Seeds ---------------------------------
 
 SEED_MOTION     0               # rand. seed for PSF turbulent motion (0=time)
-SEED_STARPOS    1               # random seed for star positions (0=time)
+SEED_STARPOS    15               # random seed for star positions (0=time)
 
 #----------------------------- Miscellaneous ---------------------------------
 

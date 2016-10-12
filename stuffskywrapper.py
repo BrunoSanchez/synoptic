@@ -90,7 +90,7 @@ def run_sky(skyconf, img_path=None, t_exp=None):
         cmd = "sky -c {conf} -IMAGE_NAME {img_path}".format(conf=skyconf,
                                                             img_path=img_path)
     if t_exp is not None:
-        cmd = cmd + "-EXPOSURE_TIME {}".format(t_exp)
+        cmd = cmd + " -EXPOSURE_TIME {}".format(t_exp)
 
     cmd = shlex.split(cmd)
 

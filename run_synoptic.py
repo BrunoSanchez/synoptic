@@ -46,12 +46,27 @@ w.write_skyconf('conf.sky', skyconf)
 img = w.run_sky('conf.sky', img_path='test_image')
 
 files = []
-for i in range(10):
+for i in range(40):
     files.append(w.run_sky('conf.sky',
-                           img_path='image_{}.fits'.format(str(i).zfill(3)),
-                           t_exp=i*10 + 200)
+                           img_path='./test_images/image_{}.fits'.format(
+                                    str(i).zfill(3)),
+                           t_exp=str(i*10 + 200))
                            )
 
 with pc.ImageEnsemble(files) as ensemble:
     R, S = ensemble.calculate_R(n_procs=4, return_S=True)
 
+
+utils.encapsule_S(S, 'S.fits')
+utils.encapsule_R(R, 'R.fits')
+
+utils.plot_S(S, 'S.png')
+utils.plot_R(R, 'R.png')
+
+
+import numpy as np
+aux_r = np.ma.masked_outside(R.real, 0.1, 30000., copy=True)
+
+
+utils.encapsule_S(aux_r.filled(0.1), 'R_aux.fits')
+utils.plot_S(aux_r, 'R_aux.png')
