@@ -21,6 +21,9 @@
 #  MA 02110-1301, USA.
 #
 #
+import matplotlib.pyplot as plt
+import numpy as np
+
 from properimage import propercoadd as pc
 from properimage import utils
 import stuffskywrapper as w
@@ -54,19 +57,23 @@ for i in range(40):
                            )
 
 with pc.ImageEnsemble(files) as ensemble:
-    R, S = ensemble.calculate_R(n_procs=4, return_S=True)
+    S_hat_stack, S_stack, S_hat, S, R_hat = ensemble.calculate_R(n_procs=4,
+                                                                 debug=True)
 
+plt.subplot(121)
+plt.imshow(np.log10(np.absolute(R_hat.real)), cmap='viridis')
+plt.subplot(122)
+plt.imshow(np.log10(np.absolute(R_hat.imag)), cmap='viridis')
+plt.show()
 
-utils.encapsule_S(S, 'S.fits')
-utils.encapsule_R(R, 'R.fits')
+plt.subplot(121)
+plt.imshow(np.log10(np.absolute(S_hat.real)), cmap='viridis')
+plt.subplot(122)
+plt.imshow(np.log10(np.absolute(S_hat.imag)), cmap='viridis')
+plt.show()
 
-utils.plot_S(S, 'S.png')
-utils.plot_R(R, 'R.png')
+R_std = np.std(S_hat_stack, axis=2)
 
+plt.imshow(np.log10(np.absolute(R_std)), cmap='viridis')
+plt.show()
 
-import numpy as np
-aux_r = np.ma.masked_outside(R.real, 0.1, 30000., copy=True)
-
-
-utils.encapsule_S(aux_r.filled(0.1), 'R_aux.fits')
-utils.plot_S(aux_r, 'R_aux.png')
