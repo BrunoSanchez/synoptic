@@ -23,6 +23,7 @@
 #
 import matplotlib.pyplot as plt
 import numpy as np
+from astropy.io import fits
 
 from properimage import propercoadd as pc
 from properimage import utils
@@ -53,27 +54,31 @@ for i in range(40):
     files.append(w.run_sky('conf.sky',
                            img_path='./test_images/image_{}.fits'.format(
                                     str(i).zfill(3)),
-                           t_exp=str(i*10 + 200))
-                           )
+                           t_exp=200#str(i*10 + 200)
+                           ))
 
 with pc.ImageEnsemble(files) as ensemble:
-    S_hat_stack, S_stack, S_hat, S, R_hat = ensemble.calculate_R(n_procs=4,
+    S_hat_stack, S_stack, S_hat, S, R_hat = ensemble.calculate_R(n_procs=6,
                                                                  debug=True)
 
 plt.subplot(121)
 plt.imshow(np.log10(np.absolute(R_hat.real)), cmap='viridis')
 plt.subplot(122)
 plt.imshow(np.log10(np.absolute(R_hat.imag)), cmap='viridis')
-plt.show()
+plt.savefig('R_hat.png')
 
 plt.subplot(121)
 plt.imshow(np.log10(np.absolute(S_hat.real)), cmap='viridis')
 plt.subplot(122)
 plt.imshow(np.log10(np.absolute(S_hat.imag)), cmap='viridis')
-plt.show()
+plt.savefig('S_hat.png')
 
 R_std = np.std(S_hat_stack, axis=2)
 
 plt.imshow(np.log10(np.absolute(R_std)), cmap='viridis')
-plt.show()
+plt.savefig('R_std.png')
 
+
+R = pc._ifftwn(R_hat)
+
+utils.encapsule_R(R, path='R.fits')
