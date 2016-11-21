@@ -42,6 +42,7 @@
 *.backup
 *.log
 *.x
+*.tiff
 
 # Python pyc
 *.pyc
@@ -49,4 +50,12 @@
 # Geany project files
 synoptic_project
 
+# Stuff and SkyMaker files
+*.list
+
+# Astronomical data
+*.fits
+
 # Selected files
+conf.sky
+conf.stuff

@@ -82,12 +82,13 @@ def run_stuff(stuffconf):
     subprocess.call(cmd)
     return
 
-def run_sky(skyconf, img_path=None, t_exp=None):
+def run_sky(skyconf, stuff_cat='', img_path=None, t_exp=None):
     if img_path is None:
     #    img_path = skyconf['image_name']
-        cmd = "sky -c {conf} ".format(conf=skyconf)
+        cmd = "sky "+stuff_cat+" -c {conf} ".format(conf=skyconf)
     else:
-        cmd = "sky -c {conf} -IMAGE_NAME {img_path}".format(conf=skyconf,
+        cmd = "sky "+stuff_cat+" -c {conf} -IMAGE_NAME {img_path}".format(
+                                                                conf=skyconf,
                                                             img_path=img_path)
     if t_exp is not None:
         cmd = cmd + " -EXPOSURE_TIME {}".format(t_exp)
