@@ -8,7 +8,7 @@ CATALOG_NAME   {{ cat_name }}   # output catalog file name(s)
 IMAGE_WIDTH    {{ im_w }}           # width of the simulated frame
 IMAGE_HEIGHT   {{ im_h }}           # height of the simulated frame
 PIXEL_SIZE     {{ px_scale }}           # pixel size (arcsec)
-MAG_LIMITS      16.0,28.0       # allowed range of apparent magnitudes
+MAG_LIMITS      16.0,24.0       # allowed range of apparent magnitudes
 
 #------------------------ Zero-points and Background -------------------------
 
@@ -110,8 +110,8 @@ SED_STARS       Vega            # stellar SEDs
 
 #----------------------------- Random Seeds ----------------------------------
 
-SEED_STARS      0 #15               # random seed for the stellar field (0=time)
-SEED_GALAXIES   0 #15               # random seed for the galaxy field (0=time)
+SEED_STARS      15               # random seed for the stellar field (0=time)
+SEED_GALAXIES   15               # random seed for the galaxy field (0=time)
 
 #----------------------------- Miscellaneous ---------------------------------
 

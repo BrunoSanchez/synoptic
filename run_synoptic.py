@@ -36,8 +36,8 @@ stuffconf = {'cat_name' : 'cat.list',
              }
 
 w.write_stuffconf('conf.stuff', stuffconf)
-cat_name = w.run_stuff('conf.stuff')
-
+w.run_stuff('conf.stuff')
+cat_name = stuffconf['cat_name']
 skyconf = {'image_name' : 'test.fits',
            'image_size' : 1024,
            'exp_time'   : 300,
@@ -51,7 +51,7 @@ img = w.run_sky('conf.sky', img_path='test_image')
 
 files = []
 for i in range(40):
-    files.append(w.run_sky('conf.sky',
+    files.append(w.run_sky('conf.sky', cat_name,
                            img_path='./test_images/image_{}.fits'.format(
                                     str(i).zfill(3)),
                            t_exp=200#str(i*10 + 200)
