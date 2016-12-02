@@ -53,7 +53,7 @@ w.run_stuff('dataset_simulation/conf.stuff')
 # generate the Reference image
 skyconf = {'image_name' : 'test.fits',
            'image_size' : 1024,
-           'exp_time'   : 300,
+           'exp_time'   : 600,
            'mag_zp'     : 25.0,
            'px_scale'   : 0.3,
            'seeing_fwhm': 0.9,
@@ -89,7 +89,7 @@ newcat = Table(rows=rows, names=['object_code', 'x', 'y', 'app_mag'])
 newcat.write('dataset_simulation/transient.list',
              format='ascii.fast_no_header')
 
-#os.system('cat dataset_simulation/transient.list dataset_simulation/images/ref.list > dataset_simulation/transient.list')
+os.system('cat dataset_simulation/images/ref.list >> dataset_simulation/transient.list')
 
 # generate the Reference image
 skyconf = {'image_name' : 'test.fits',
@@ -107,4 +107,9 @@ w.write_skyconf('dataset_simulation/conf.sky', skyconf)
 
 new = w.run_sky('dataset_simulation/conf.sky', cat_name,
                 img_path=os.path.join(imgs_dir, 'new.fits'))
+
+subtractor = ps.ImageSubtractor(ref, new)
+D, _ = subtractor.subtract()
+
+utils.encapsule_R(D, path='dataset_simulation/images/diff.fits')
 
