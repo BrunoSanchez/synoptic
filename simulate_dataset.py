@@ -29,6 +29,7 @@ from astropy.io import fits
 from astropy.io import ascii
 from astropy.table import Table
 
+import ois
 from properimage import propercoadd as pc
 from properimage import propersubtract as ps
 from properimage import utils
@@ -53,10 +54,10 @@ w.run_stuff('dataset_simulation/conf.stuff')
 # generate the Reference image
 skyconf = {'image_name' : 'test.fits',
            'image_size' : 1024,
-           'exp_time'   : 600,
+           'exp_time'   : 300,
            'mag_zp'     : 25.0,
            'px_scale'   : 0.3,
-           'seeing_fwhm': 0.9,
+           'seeing_fwhm': 1.6,
            'starcount_zp': 3e4,
            'starcount_slope': 0.2
            }
@@ -75,11 +76,11 @@ ref = w.run_sky('dataset_simulation/conf.sky', cat_name,
                     #~ names=colnames)
 
 rows = []
-for i in xrange(15):
+for i in xrange(25):
     code = 100
     x = np.random.randint(10, 1014)
     y = np.random.randint(10, 1014)
-    app_mag = 4. * np.random.random() + 18.
+    app_mag = 4. * np.random.random() + 19.
     row = [code, x, y, app_mag]
     #row.extend(np.zeros(9))
     rows.append(row)
@@ -91,13 +92,13 @@ newcat.write('dataset_simulation/transient.list',
 
 os.system('cat dataset_simulation/images/ref.list >> dataset_simulation/transient.list')
 
-# generate the Reference image
+# generate the new image
 skyconf = {'image_name' : 'test.fits',
            'image_size' : 1024,
            'exp_time'   : 300,
            'mag_zp'     : 25.0,
            'px_scale'   : 0.3,
-           'seeing_fwhm': 1.1,
+           'seeing_fwhm': 2.5,
            'starcount_zp': 3e-4,
            'starcount_slope': 0.2
            }
@@ -108,8 +109,11 @@ w.write_skyconf('dataset_simulation/conf.sky', skyconf)
 new = w.run_sky('dataset_simulation/conf.sky', cat_name,
                 img_path=os.path.join(imgs_dir, 'new.fits'))
 
+print 'Images to be subtracted: {} {}'.format(ref, new)
+
 subtractor = ps.ImageSubtractor(ref, new)
 D, _ = subtractor.subtract()
-
 utils.encapsule_R(D, path='dataset_simulation/images/diff.fits')
 
+ois_d = ois.optimal_system(fits.getdata(ref), fits.getdata(ref))[0]
+utils.encapsule_R(ois_d, path='dataset_simulation/images/diff_ois.fits')
