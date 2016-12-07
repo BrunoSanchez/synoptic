@@ -57,7 +57,7 @@ skyconf = {'image_name' : 'test.fits',
            'exp_time'   : 300,
            'mag_zp'     : 25.0,
            'px_scale'   : 0.3,
-           'seeing_fwhm': 1.6,
+           'seeing_fwhm': 1.0,
            'starcount_zp': 3e4,
            'starcount_slope': 0.2
            }
@@ -66,15 +66,7 @@ w.write_skyconf('dataset_simulation/conf.sky', skyconf)
 ref = w.run_sky('dataset_simulation/conf.sky', cat_name,
                 img_path=os.path.join(imgs_dir, 'ref.fits'))
 
-# now read the output source list and add some transients
-#~ colnames = ['object_code', 'x', 'y', 'app_mag', 'bulge_to_total', 'bulge_rad',
-            #~ 'bulge_aspect', 'bulge_PA','disk_scale_l', 'disk_aspect',
-            #~ 'disk_PA', 'z', 'hubble_stage']
-
-#~ refcat = ascii.read(os.path.join(imgs_dir, 'ref.list'),
-                    #~ format='fast_no_header',
-                    #~ names=colnames)
-
+# add some transients
 rows = []
 for i in xrange(25):
     code = 100
@@ -98,7 +90,7 @@ skyconf = {'image_name' : 'test.fits',
            'exp_time'   : 300,
            'mag_zp'     : 25.0,
            'px_scale'   : 0.3,
-           'seeing_fwhm': 2.5,
+           'seeing_fwhm': 1.0,
            'starcount_zp': 3e-4,
            'starcount_slope': 0.2
            }
@@ -111,9 +103,9 @@ new = w.run_sky('dataset_simulation/conf.sky', cat_name,
 
 print 'Images to be subtracted: {} {}'.format(ref, new)
 
-subtractor = ps.ImageSubtractor(ref, new)
-D, _ = subtractor.subtract()
-utils.encapsule_R(D, path='dataset_simulation/images/diff.fits')
+with ps.ImageSubtractor(ref, new) as subtractor:
+    D, _ = subtractor.subtract()
+    utils.encapsule_R(D, path='dataset_simulation/images/diff.fits')
 
 ois_d = ois.optimal_system(fits.getdata(ref), fits.getdata(ref))[0]
 utils.encapsule_R(ois_d, path='dataset_simulation/images/diff_ois.fits')
