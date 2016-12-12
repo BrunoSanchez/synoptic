@@ -25,9 +25,10 @@
 from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
 from sqlalchemy import Float, Text
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-engine = create_engine('sqlite:///home/bruno/Devel/synoptic/dataset_simulation/fullexperiment.db', echo=True)
+engine = create_engine('sqlite:////home/bruno/Devel/synoptic/dataset_simulation/fullexperiment.db', echo=True)
 Base = declarative_base()
 
 
@@ -44,6 +45,16 @@ class Simulated(Base):
 
     def __init__(self, name):
         self.name = name
+
+
+class Real(Base):
+
+    __tablename__ = "reals"
+
+    id = Column(Integer, primary_key=True)
+
+    detected_id = Column(Integer, ForeignKey('Detected.id'))
+    detected =
 
 
 class Detected(Base):
@@ -71,7 +82,8 @@ class Detected(Base):
     YMIN_IMAGE = Column(Float, nullable=False)            # Minimum y-coordinate among detected pixels                 [pixel]
     XMAX_IMAGE = Column(Float, nullable=False)            # Maximum x-coordinate among detected pixels                 [pixel]
     YMAX_IMAGE = Column(Float, nullable=False)            # Maximum y-coordinate among detected pixels                 [pixel]
-    X_IMAGE = Column(Float, nullable=False)               # Object position along x                                    [pixel]
+    XPEAK_IMAGE = Column(Float, nullable=False)           # x-coordinate of the brightest pixel                       [pixel]
+    YPEAK_IMAGE = Column(Float, nullable=False)           # y-coordinate of the brightest pixel  X_IMAGE = Column(Float, nullable=False)               # Object position along x                                    [pixel]
     Y_IMAGE = Column(Float, nullable=False)               # Object position along y                                    [pixel]
     X2_IMAGE = Column(Float, nullable=False)              # Variance along x                                           [pixel**2]
     Y2_IMAGE = Column(Float, nullable=False)              # Variance along y                                           [pixel**2]
@@ -88,13 +100,18 @@ class Detected(Base):
     ELONGATION = Column(Float, nullable=False)            # A_IMAGE/B_IMAGE
     ELLIPTICITY = Column(Float, nullable=False)           # 1 - B_IMAGE/A_IMAGE
     CLASS_STAR = Column(Float, nullable=False)            # S/G classifier output
+
+    DELTAX = Column(Float, nullable=False)
+    DELTAY = Column(Float, nullable=False)
+    RATIO = Column(Float, nullable=False)
+    ROUNDNESS = Column(Float, nullable=False)
+    PEAK_CENTROID = Column(Float, nullable=False)
     IMAGE = Column(String(100), nullable=False)
+
+    def __init__(self, name):
+        self.name = name
+
+
 
 Base.metadata.create_all(engine)
 
-def main(args):
-    return 0
-
-if __name__ == '__main__':
-    import sys
-    sys.exit(main(sys.argv))
