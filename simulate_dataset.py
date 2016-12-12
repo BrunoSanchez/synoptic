@@ -36,76 +36,96 @@ from properimage import utils
 
 import stuffskywrapper as w
 
-imgs_dir = os.path.abspath('./dataset_simulation/images')
-if not os.path.isdir(imgs_dir):
-    os.makedirs(imgs_dir)
 
-# generate stuff cat
-stuffconf = {'cat_name' : 'dataset_simulation/gxcat.list',
-             'im_w'     : 1024,
-             'im_h'     : 1024,
-             'px_scale' : 0.3
-             }
+def main(imgs_dir):
 
-w.write_stuffconf('dataset_simulation/conf.stuff', stuffconf)
-cat_name = stuffconf['cat_name']
-w.run_stuff('dataset_simulation/conf.stuff')
+    if not os.path.isdir(imgs_dir):
+        os.makedirs(imgs_dir)
 
-# generate the Reference image
-skyconf = {'image_name' : 'test.fits',
-           'image_size' : 1024,
-           'exp_time'   : 300,
-           'mag_zp'     : 25.0,
-           'px_scale'   : 0.3,
-           'seeing_fwhm': 1.0,
-           'starcount_zp': 3e4,
-           'starcount_slope': 0.2
-           }
+    # generate stuff cat
+    stuffconf = {'cat_name' : 'dataset_simulation/gxcat.list',
+                 'im_w'     : 1024,
+                 'im_h'     : 1024,
+                 'px_scale' : 0.3
+                 }
 
-w.write_skyconf('dataset_simulation/conf.sky', skyconf)
-ref = w.run_sky('dataset_simulation/conf.sky', cat_name,
-                img_path=os.path.join(imgs_dir, 'ref.fits'))
+    w.write_stuffconf('dataset_simulation/conf.stuff', stuffconf)
+    cat_name = stuffconf['cat_name']
+    w.run_stuff('dataset_simulation/conf.stuff')
 
-# add some transients
-rows = []
-for i in xrange(25):
-    code = 100
-    x = np.random.randint(10, 1014)
-    y = np.random.randint(10, 1014)
-    app_mag = 4. * np.random.random() + 19.
-    row = [code, x, y, app_mag]
-    #row.extend(np.zeros(9))
-    rows.append(row)
+    # generate the Reference image
+    skyconf = {'image_name' : 'test.fits',
+               'image_size' : 1024,
+               'exp_time'   : 350,
+               'mag_zp'     : 25.0,
+               'px_scale'   : 0.3,
+               'seeing_fwhm': 0.90,
+               'starcount_zp': 3e4,
+               'starcount_slope': 0.2
+               }
 
-newcat = Table(rows=rows, names=['object_code', 'x', 'y', 'app_mag'])
+    w.write_skyconf('dataset_simulation/conf.sky', skyconf)
+    ref = w.run_sky('dataset_simulation/conf.sky', cat_name,
+                    img_path=os.path.join(imgs_dir, 'ref.fits'))
 
-newcat.write('dataset_simulation/transient.list',
-             format='ascii.fast_no_header')
+    # add some transients
+    rows = []
+    for i in xrange(40):
+        code = 100
+        x = np.random.randint(20, 1004)
+        y = np.random.randint(20, 1004)
+        app_mag = 4. * np.random.random() + 19.
+        row = [code, x, y, app_mag]
+        #row.extend(np.zeros(9))
+        rows.append(row)
 
-os.system('cat dataset_simulation/images/ref.list >> dataset_simulation/transient.list')
+    newcat = Table(rows=rows, names=['object_code', 'x', 'y', 'app_mag'])
 
-# generate the new image
-skyconf = {'image_name' : 'test.fits',
-           'image_size' : 1024,
-           'exp_time'   : 300,
-           'mag_zp'     : 25.0,
-           'px_scale'   : 0.3,
-           'seeing_fwhm': 1.0,
-           'starcount_zp': 3e-4,
-           'starcount_slope': 0.2
-           }
+    newcat.write('dataset_simulation/transient.list',
+                 format='ascii.fast_no_header')
 
-cat_name = os.path.join('dataset_simulation/transient.list')
-w.write_skyconf('dataset_simulation/conf.sky', skyconf)
+    os.system('cat dataset_simulation/images/ref.list >> dataset_simulation/transient.list')
 
-new = w.run_sky('dataset_simulation/conf.sky', cat_name,
-                img_path=os.path.join(imgs_dir, 'new.fits'))
+    # generate the new image
+    skyconf = {'image_name' : 'test.fits',
+               'image_size' : 1024,
+               'exp_time'   : 300,
+               'mag_zp'     : 25.0,
+               'px_scale'   : 0.3,
+               'seeing_fwhm': 1.2,
+               'starcount_zp': 3e-4,
+               'starcount_slope': 0.2
+               }
 
-print 'Images to be subtracted: {} {}'.format(ref, new)
+    cat_name = os.path.join('dataset_simulation/transient.list')
+    w.write_skyconf('dataset_simulation/conf.sky', skyconf)
 
-with ps.ImageSubtractor(ref, new) as subtractor:
-    D, _ = subtractor.subtract()
-    utils.encapsule_R(D, path='dataset_simulation/images/diff.fits')
+    new = w.run_sky('dataset_simulation/conf.sky', cat_name,
+                    img_path=os.path.join(imgs_dir, 'new.fits'))
 
-ois_d = ois.optimal_system(fits.getdata(ref), fits.getdata(ref))[0]
-utils.encapsule_R(ois_d, path='dataset_simulation/images/diff_ois.fits')
+    print 'Images to be subtracted: {} {}'.format(ref, new)
+
+    with ps.ImageSubtractor(ref, new) as subtractor:
+        D, P = subtractor.subtract()
+
+    xc, yc = np.where(P.real==np.max(P.real))
+    P = P.real[0:2*np.int(xc), 0:2*np.int(yc)]
+
+    d_shifted = np.ones(D.shape) * np.median(D)
+    d_shifted[14:, 14:] = D[7:-7, 7:-7]
+
+    D = d_shifted
+
+    utils.encapsule_R(D, path=os.path.join(imgs_dir, 'diff.fits'))
+
+    utils.encapsule_R(P, path=os.path.join(imgs_dir, 'psf_d.fits'))
+
+    #~ ois_d = ois.optimal_system(fits.getdata(ref), fits.getdata(ref))[0]
+    #~ utils.encapsule_R(ois_d, path=os.path.join(imgs_dir, 'diff_ois.fits'))
+
+    return newcat
+
+
+if __name__ == '__main__':
+    import sys
+    sys.exit(main(sys.argv))

@@ -99,6 +99,24 @@ def run_sky(skyconf, stuff_cat='', img_path=None, t_exp=None):
     return img_path
 
 
+def run_sex(sexconf, img_path=None, cat_output=None):
+    if img_path is None:
+        print 'Provide an image path'
+        return
+
+    else:
+        cmd = "sextractor {img_path} -c {conf} ".format(conf=sexconf,
+                                                 img_path=img_path)
+    if cat_output is not None:
+        cmd = cmd + " -CATALOG_NAME {}".format(cat_output)
+
+    cmd = shlex.split(cmd)
+
+    subprocess.call(cmd)
+    return cat_output
+
+
+
 def main(args):
     return 0
 
