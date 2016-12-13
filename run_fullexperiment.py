@@ -23,25 +23,32 @@
 #
 
 import os
+import odo
+import numpy as np
 from astropy.io import ascii
 import simulate_dataset as sd
 import stuffskywrapper as w
 
+import fullexperiment_db
+
 imgs_dir = os.path.abspath('./dataset_simulation/images/')
 
-for i in range(3):
+for i in range(4):
     suffix = 'img{}'.format(str(i).zfill(5))
 
     curr_dir = os.path.join(imgs_dir, suffix)
 
     transients = sd.main(curr_dir)
+    print 'images subtracted'
 
     diff_path = os.path.join(curr_dir, 'diff.fits')
     cat_out = os.path.join(curr_dir, 'outcat.cat')
 
+    print 'running sextractor'
     w.run_sex('./conf.sex', diff_path, cat_output='outcat.dat')
 
-    detections = ascii.read('outcat.dat', format='sextractor')
+    print 'sextractor succesful'
+    detections = ascii.read('outcat.dat', format='sextractor').to_pandas()
 
     deltax = list(detections["XMAX_IMAGE"] - detections["XMIN_IMAGE"])
     deltay = list(detections["YMAX_IMAGE"] - detections["YMIN_IMAGE"])
@@ -52,6 +59,19 @@ for i in range(3):
 
     peak_centroid = list(np.sqrt((detections['XPEAK_IMAGE'] - detections['X_IMAGE'])**2
                      + (detections['YPEAK_IMAGE'] - detections['Y_IMAGE'])**2))
+
+    detections['DELTAX'] = deltax
+    detections['DELTAY'] = deltay
+    detections['RATIO'] = ratio
+    detections['ROUNDNESS'] = roundness
+    detections['PEAK_CENTROID'] = peak_centroid
+
+    detections['IMAGE'] = np.repeat(diff_path, len(deltax))
+    detections['id'] = np.repeat(None, len(deltax))
+
+    odo.odo(detections, 'sqlite:///dataset_simulation/fullexperiment.db/::detected')
+
+    print 'data commited to DB'
 
 
 

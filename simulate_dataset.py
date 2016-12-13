@@ -60,7 +60,7 @@ def main(imgs_dir):
                'mag_zp'     : 25.0,
                'px_scale'   : 0.3,
                'seeing_fwhm': 0.90,
-               'starcount_zp': 3e4,
+               'starcount_zp': 3e5,
                'starcount_slope': 0.2
                }
 
@@ -105,7 +105,7 @@ def main(imgs_dir):
 
     print 'Images to be subtracted: {} {}'.format(ref, new)
 
-    with ps.ImageSubtractor(ref, new) as subtractor:
+    with ps.ImageSubtractor(ref, new, align=False) as subtractor:
         D, P = subtractor.subtract()
 
     xc, yc = np.where(P.real==np.max(P.real))

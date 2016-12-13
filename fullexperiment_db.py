@@ -47,14 +47,14 @@ class Simulated(Base):
         self.name = name
 
 
-class Real(Base):
+#~ class Real(Base):
 
-    __tablename__ = "reals"
+    #~ __tablename__ = "reals"
 
-    id = Column(Integer, primary_key=True)
+    #~ id = Column(Integer, primary_key=True)
 
-    detected_id = Column(Integer, ForeignKey('Detected.id'))
-    detected =
+    #~ detected_id = Column(Integer, ForeignKey('Detected.id'))
+    #~ detected =
 
 
 class Detected(Base):
@@ -62,6 +62,7 @@ class Detected(Base):
     __tablename__ = "detected"
 
     id = Column(Integer, primary_key=True)
+
     NUMBER = Column(Integer, nullable=False)
     FLUX_ISO = Column(Float, nullable=False)
     FLUXERR_ISO = Column(Float, nullable=False)           # RMS error for isophotal flux                               [count]
@@ -83,7 +84,8 @@ class Detected(Base):
     XMAX_IMAGE = Column(Float, nullable=False)            # Maximum x-coordinate among detected pixels                 [pixel]
     YMAX_IMAGE = Column(Float, nullable=False)            # Maximum y-coordinate among detected pixels                 [pixel]
     XPEAK_IMAGE = Column(Float, nullable=False)           # x-coordinate of the brightest pixel                       [pixel]
-    YPEAK_IMAGE = Column(Float, nullable=False)           # y-coordinate of the brightest pixel  X_IMAGE = Column(Float, nullable=False)               # Object position along x                                    [pixel]
+    YPEAK_IMAGE = Column(Float, nullable=False)           # y-coordinate of the brightest pixel
+    X_IMAGE = Column(Float, nullable=False)               # Object position along x                                    [pixel]
     Y_IMAGE = Column(Float, nullable=False)               # Object position along y                                    [pixel]
     X2_IMAGE = Column(Float, nullable=False)              # Variance along x                                           [pixel**2]
     Y2_IMAGE = Column(Float, nullable=False)              # Variance along y                                           [pixel**2]

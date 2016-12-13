@@ -20,7 +20,8 @@ DETECT_THRESH    2.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
 ANALYSIS_THRESH  2.5            # <sigmas> or <threshold>,<ZP> in mag.arcsec-2
 
 FILTER           Y              # apply filter for detection (Y or N)?
-FILTER_NAME      /usr/share/sextractor/default.conv   # name of the file containing the filter
+#FILTER_NAME      /usr/share/sextractor/default.conv   # name of the file containing the filter
+FILTER_NAME      /home/bruno/packages/sextractor-2.19.5/share/sextractor/default.conv  # name of the file containing the filter
 FILTER_THRESH                   # Threshold[s] for retina filtering
 
 DEBLEND_NTHRESH  32             # Number of deblending sub-thresholds
@@ -69,7 +70,8 @@ PIXEL_SCALE      1.0            # size of pixel in arcsec (0=use FITS WCS info)
 #------------------------- Star/Galaxy Separation ----------------------------
 
 SEEING_FWHM      1.0            # stellar FWHM in arcsec
-STARNNW_NAME     /usr/share/sextractor/default.nnw    # Neural-Network_Weight table filename
+#STARNNW_NAME     /usr/share/sextractor/default.nnw    # Neural-Network_Weight table filename
+STARNNW_NAME     /home/bruno/packages/sextractor-2.19.5/share/sextractor/default.nnw    # Neural-Network_Weight table filename
 
 #------------------------------ Background -----------------------------------
 
