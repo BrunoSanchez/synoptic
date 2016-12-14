@@ -47,14 +47,14 @@ class Simulated(Base):
         self.name = name
 
 
-class Real(Base):
+#~ class Real(Base):
 
-    __tablename__ = "reals"
+    #~ __tablename__ = "reals"
 
-    id = Column(Integer, primary_key=True)
+    #~ id = Column(Integer, primary_key=True)
 
-    detected_id = Column(Integer, ForeignKey('Detected.id'))
-    detected =
+    #~ detected_id = Column(Integer, ForeignKey('Detected.id'))
+    #~ detected =
 
 
 class Detected(Base):
